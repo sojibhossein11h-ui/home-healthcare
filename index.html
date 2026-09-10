@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="bn">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>হোম হেলথ কেয়ার</title>
+  <meta name="description" content="সবার জন্য মানবিক ও সহজ স্বাস্থ্যসেবা">
+  <style>
+    *{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,"Noto Sans Bengali",sans-serif;background:#f4f8fb;color:#17324d}button,input,textarea,select{font:inherit}.top{background:linear-gradient(135deg,#087f5b,#0b6fa4);color:white;padding:28px 18px 42px;border-radius:0 0 28px 28px}.wrap{max-width:900px;margin:auto}.brand{display:flex;gap:14px;align-items:center}.logo{width:58px;height:58px;border-radius:18px;background:white;color:#087f5b;display:grid;place-items:center;font-size:30px;font-weight:800}.top h1{margin:0;font-size:30px}.top p{margin:6px 0 0;opacity:.92}.card{background:white;margin:-22px auto 16px;border-radius:22px;padding:18px;box-shadow:0 8px 28px #1232  }.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.action{border:0;border-radius:16px;padding:16px;text-align:left;background:#eef7f4;color:#075d47;font-weight:700;cursor:pointer}.action small{display:block;color:#597383;font-weight:400;margin-top:5px}.danger{background:#fff0f0;color:#b42318}.blue{background:#eef5ff;color:#175cd3}.title{font-size:20px;margin:6px 0 14px}.section{background:white;border-radius:20px;padding:18px;margin:16px 0;box-shadow:0 4px 18px #1231}.field{margin:10px 0}.field label{display:block;font-weight:650;margin-bottom:6px}.field input,.field textarea,.field select{width:100%;border:1px solid #d4e0e8;border-radius:12px;padding:12px;background:#fbfdff}.field textarea{min-height:90px;resize:vertical}.btn{border:0;border-radius:12px;padding:12px 18px;background:#087f5b;color:white;font-weight:700;cursor:pointer}.phone{display:inline-flex;align-items:center;gap:7px;text-decoration:none;background:#e9f8f1;color:#087f5b;padding:11px 13px;border-radius:12px;font-weight:750;margin:4px}.chat{border:1px solid #d9e5ec;border-radius:16px;padding:12px;background:#f8fbfd}.msg{padding:10px 12px;border-radius:14px;margin:7px 0;max-width:88%}.ai{background:#e8f5ef}.user{background:#eaf2ff;margin-left:auto}.chatrow{display:flex;gap:8px;margin-top:10px}.chatrow input{flex:1;border:1px solid #d4e0e8;border-radius:12px;padding:12px}.notice{font-size:13px;color:#5f7280;background:#f7fafc;padding:10px;border-radius:12px;margin-top:10px}.hidden{display:none}.footer{text-align:center;color:#6c7c88;font-size:13px;padding:20px}.success{margin-top:10px;color:#087f5b;font-weight:700}@media(max-width:620px){.grid{grid-template-columns:1fr}.top h1{font-size:25px}}
+  </style>
+</head>
+<body>
+  <header class="top"><div class="wrap">
+    <div class="brand"><div class="logo">❤</div><div><h1>হোম হেলথ কেয়ার</h1><p>মানুষের পাশে, ঘরে বসেই সহজ স্বাস্থ্যসেবা</p></div></div>
+  </div></header>
+  <main class="wrap">
+    <section class="card">
+      <div class="grid">
+        <button class="action" onclick="show('patient')">👤 রোগীর তথ্য<small>নাম, ঠিকানা, বয়স ও শারীরিক তথ্য</small></button>
+        <button class="action blue" onclick="show('doctor')">👨‍⚕️ ডাক্তার/স্বাস্থ্যকর্মী<small>পরামর্শ ও সেবার তথ্য</small></button>
+        <button class="action" onclick="show('report')">📄 রিপোর্ট ও ওষুধ<small>রিপোর্ট, প্রেসক্রিপশন ও ওষুধ</small></button>
+        <button class="action danger" onclick="show('emergency')">🚨 জরুরি সেবা<small>ফোন ও দ্রুত যোগাযোগ</small></button>
+        <button class="action blue" onclick="show('chat')">💬 AI লাইভ চ্যাট<small>প্রাথমিক স্বাস্থ্য তথ্য ও নির্দেশনা</small></button>
+        <button class="action" onclick="show('delivery')">💊 ওষুধ পৌঁছে দেওয়া<small>প্রয়োজন হলে ডেলিভারি সহায়তা</small></button>
+      </div>
+    </section>
+
+    <section id="patient" class="section hidden"><h2 class="title">👤 রোগীর তথ্য</h2>
+      <div class="field"><label>রোগীর নাম</label><input id="name" placeholder="নাম লিখুন"></div>
+      <div class="grid"><div class="field"><label>বয়স</label><input type="number" placeholder="বয়স"></div><div class="field"><label>লিঙ্গ</label><select><option>নির্বাচন করুন</option><option>পুরুষ</option><option>নারী</option><option>অন্যান্য</option></select></div></div>
+      <div class="grid"><div class="field"><label>রক্তচাপ</label><input placeholder="যেমন 120/80"></div><div class="field"><label>রক্তের গ্রুপ</label><input placeholder="যেমন O+ / O-"></div></div>
+      <div class="field"><label>ঠিকানা</label><textarea placeholder="সম্পূর্ণ ঠিকানা"></textarea></div><div class="field"><label>অসুস্থতার বিবরণ</label><textarea placeholder="কী সমস্যা হচ্ছে লিখুন"></textarea></div>
+      <button class="btn" onclick="saved('রোগীর তথ্য সংরক্ষণের জন্য প্রস্তুত।')">তথ্য সংরক্ষণ</button><div id="patientMsg" class="success"></div>
+    </section>
+
+    <section id="doctor" class="section hidden"><h2 class="title">👨‍⚕️ ডাক্তার / স্বাস্থ্যকর্মী</h2><div class="field"><label>ডাক্তারের নাম</label><input placeholder="নাম"></div><div class="field"><label>পরামর্শ</label><textarea placeholder="ডাক্তারের পরামর্শ লিখুন"></textarea></div><div class="notice">চূড়ান্ত রোগ নির্ণয় ও চিকিৎসা অবশ্যই যোগ্য চিকিৎসকের পরামর্শ অনুযায়ী হবে।</div></section>
+
+    <section id="report" class="section hidden"><h2 class="title">📄 রিপোর্ট ও ওষুধ</h2><div class="field"><label>রিপোর্টের বিবরণ</label><textarea placeholder="রিপোর্টের তথ্য লিখুন"></textarea></div><div class="field"><label>প্রেসক্রাইব করা ওষুধ</label><textarea placeholder="ওষুধের নাম ও নিয়ম"></textarea></div><button class="btn" onclick="saved('রিপোর্ট/ওষুধের তথ্য সংরক্ষণের জন্য প্রস্তুত।')">সংরক্ষণ</button><div id="reportMsg" class="success"></div></section>
+
+    <section id="emergency" class="section hidden"><h2 class="title">🚨 জরুরি যোগাযোগ</h2><p>জরুরি অবস্থায় দ্রুত প্রয়োজনীয় সহায়তার জন্য নিচের নম্বরে যোগাযোগ করুন।</p><div><a class="phone" href="tel:01407278999">📞 01407278999</a><a class="phone" href="tel:01607339927">📞 01607339927</a></div><div class="notice">জীবন-ঝুঁকিপূর্ণ জরুরি অবস্থায় স্থানীয় জরুরি সেবাতেও যোগাযোগ করুন। AI চ্যাট জরুরি চিকিৎসার বিকল্প নয়।</div></section>
+
+    <section id="chat" class="section hidden"><h2 class="title">💬 AI লাইভ চ্যাট</h2><div class="chat" id="chatbox"><div class="msg ai">আসসালামু আলাইকুম। আমি হোম হেলথ কেয়ারের AI সহকারী। আপনার সমস্যাটি লিখুন। জরুরি বা গুরুতর হলে দ্রুত ডাক্তার/স্বাস্থ্যকর্মীর সাহায্য নিন।</div></div><div class="chatrow"><input id="chatInput" placeholder="আপনার প্রশ্ন লিখুন..." onkeydown="if(event.key==='Enter')sendChat()"><button class="btn" onclick="sendChat()">পাঠান</button></div></section>
+
+    <section id="delivery" class="section hidden"><h2 class="title">💊 ওষুধ পৌঁছে দেওয়া</h2><div class="field"><label>রোগীর নাম</label><input placeholder="নাম"></div><div class="field"><label>ডেলিভারি ঠিকানা</label><textarea placeholder="ঠিকানা"></textarea></div><div class="field"><label>প্রেসক্রিপশন/ওষুধের তথ্য</label><textarea placeholder="ওষুধের নাম বা প্রয়োজনীয় তথ্য"></textarea></div><button class="btn" onclick="alert('অনুরোধটি প্রস্তুত করা হয়েছে। পরবর্তী ধাপে স্বাস্থ্যকর্মী যাচাই করবেন।')">ডেলিভারি অনুরোধ</button></section>
+  </main>
+  <div class="footer">হোম হেলথ কেয়ার — মানবিক সেবার জন্য তৈরি একটি প্রাথমিক ওয়েব অ্যাপ</div>
+<script>
+function show(id){document.querySelectorAll('.section').forEach(x=>x.classList.add('hidden'));document.getElementById(id).classList.remove('hidden');document.getElementById(id).scrollIntoView({behavior:'smooth',block:'start'})}
+function saved(t){alert(t)}
+function sendChat(){const i=document.getElementById('chatInput'),v=i.value.trim();if(!v)return;const b=document.getElementById('chatbox');b.innerHTML+=`<div class="msg user">${escapeHtml(v)}</div><div class="msg ai">আপনার তথ্য পেয়েছি। এটি প্রাথমিক তথ্য মাত্র। নিরাপদ থাকার জন্য প্রয়োজন অনুযায়ী একজন যোগ্য ডাক্তার বা স্বাস্থ্যকর্মীর পরামর্শ নিন।</div>`;i.value='';b.scrollTop=b.scrollHeight}
+function escapeHtml(s){return s.replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}
+</script>
+</body>
+</html>
