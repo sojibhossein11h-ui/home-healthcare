@@ -1,0 +1,15 @@
+{
+  "name": "হোম হেলথ কেয়ার",
+  "short_name": "হোম হেলথ কেয়ার",
+  "description": "সবার জন্য মানবিক ও সহজ স্বাস্থ্যসেবা",
+  "lang": "bn",
+  "dir": "ltr",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f4f8fb",
+  "theme_color": "#087f5b",
+  "icons": [
+    {"src":"icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}
+  ]
+}
