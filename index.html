@@ -33,7 +33,12 @@
       <button class="btn" onclick="savePatient()">তথ্য সংরক্ষণ</button><button class="btn" style="margin-left:8px;background:#175cd3" onclick="loadPatient()">আগের তথ্য দেখুন</button><div id="patientMsg" class="success"></div>
     </section>
 
-    <section id="doctor" class="section hidden"><h2 class="title">👨‍⚕️ ডাক্তার / স্বাস্থ্যকর্মী</h2><div class="field"><label>ডাক্তারের নাম</label><input placeholder="নাম"></div><div class="field"><label>পরামর্শ</label><textarea placeholder="ডাক্তারের পরামর্শ লিখুন"></textarea></div><div class="notice">চূড়ান্ত রোগ নির্ণয় ও চিকিৎসা অবশ্যই যোগ্য চিকিৎসকের পরামর্শ অনুযায়ী হবে।</div></section>
+    <section id="doctor" class="section hidden"><h2 class="title">👨‍⚕️ ডাক্তার / স্বাস্থ্যকর্মী</h2>
+<div class="field"><label>সেবার ধরন</label><select id="careType"><option>ডাক্তারের পরামর্শ</option><option>নার্স/স্বাস্থ্যকর্মীর সহায়তা</option><option>বাড়িতে স্বাস্থ্যসেবা</option></select></div>
+<div class="grid"><div class="field"><label>ডাক্তারের/স্বাস্থ্যকর্মীর নাম</label><input id="doctorName" placeholder="নাম"></div><div class="field"><label>যোগাযোগ নম্বর</label><input id="doctorPhone" type="tel" placeholder="ফোন নম্বর"></div></div>
+<div class="field"><label>পরামর্শ / সেবার বিবরণ</label><textarea id="doctorAdvice" placeholder="পরামর্শ বা প্রয়োজনীয় সেবা লিখুন"></textarea></div>
+<button class="btn" onclick="saveDoctor()">সেবা তথ্য সংরক্ষণ</button><button class="btn" style="margin-left:8px;background:#175cd3" onclick="loadDoctor()">আগের তথ্য দেখুন</button>
+<div id="doctorMsg" class="success"></div><div class="notice">চূড়ান্ত রোগ নির্ণয় ও চিকিৎসা অবশ্যই যোগ্য চিকিৎসকের পরামর্শ অনুযায়ী হবে।</div></section>
 
     <section id="report" class="section hidden"><h2 class="title">📄 রিপোর্ট ও ওষুধ</h2><div class="field"><label>রিপোর্টের বিবরণ</label><textarea placeholder="রিপোর্টের তথ্য লিখুন"></textarea></div><div class="field"><label>প্রেসক্রাইব করা ওষুধ</label><textarea placeholder="ওষুধের নাম ও নিয়ম"></textarea></div><div class="field"><label>রিপোর্টের ছবি/ফাইল</label><input type="file" accept="image/*,.pdf"></div><button class="btn" onclick="saveReport()">রিপোর্ট/ওষুধ সংরক্ষণ</button><div id="reportMsg" class="success"></div></section>
 
@@ -59,6 +64,17 @@ function loadPatient(){
   const data=JSON.parse(raw),inputs=document.querySelectorAll('#patient input,#patient select,#patient textarea');
   inputs.forEach((x,i)=>{if(data[i]!==undefined)x.value=data[i]});
   document.getElementById('patientMsg').textContent='✓ আগের সংরক্ষিত তথ্য দেখানো হয়েছে।';
+}
+function saveDoctor(){
+  const data={type:document.getElementById('careType').value,name:document.getElementById('doctorName').value,phone:document.getElementById('doctorPhone').value,advice:document.getElementById('doctorAdvice').value};
+  localStorage.setItem('homeHealthcareDoctor',JSON.stringify(data));
+  document.getElementById('doctorMsg').textContent='✓ ডাক্তার/স্বাস্থ্যকর্মীর তথ্য এই ফোনে সংরক্ষণ করা হয়েছে।';
+}
+function loadDoctor(){
+  const d=JSON.parse(localStorage.getItem('homeHealthcareDoctor')||'null');
+  if(!d){document.getElementById('doctorMsg').textContent='এখনও কোনো সংরক্ষিত তথ্য নেই।';return}
+  document.getElementById('careType').value=d.type||'ডাক্তারের পরামর্শ';document.getElementById('doctorName').value=d.name||'';document.getElementById('doctorPhone').value=d.phone||'';document.getElementById('doctorAdvice').value=d.advice||'';
+  document.getElementById('doctorMsg').textContent='✓ আগের তথ্য দেখানো হয়েছে।';
 }
 function saveReport(){
   const inputs=document.querySelectorAll('#report textarea');
