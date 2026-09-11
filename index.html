@@ -40,7 +40,7 @@
 <button class="btn" onclick="saveDoctor()">সেবা তথ্য সংরক্ষণ</button><button class="btn" style="margin-left:8px;background:#175cd3" onclick="loadDoctor()">আগের তথ্য দেখুন</button>
 <div id="doctorMsg" class="success"></div><div class="notice">চূড়ান্ত রোগ নির্ণয় ও চিকিৎসা অবশ্যই যোগ্য চিকিৎসকের পরামর্শ অনুযায়ী হবে।</div></section>
 
-    <section id="report" class="section hidden"><h2 class="title">📄 রিপোর্ট ও ওষুধ</h2><div class="field"><label>রিপোর্টের বিবরণ</label><textarea placeholder="রিপোর্টের তথ্য লিখুন"></textarea></div><div class="field"><label>প্রেসক্রাইব করা ওষুধ</label><textarea placeholder="ওষুধের নাম ও নিয়ম"></textarea></div><div class="field"><label>রিপোর্টের ছবি/ফাইল</label><input type="file" accept="image/*,.pdf"></div><button class="btn" onclick="saveReport()">রিপোর্ট/ওষুধ সংরক্ষণ</button><div id="reportMsg" class="success"></div></section>
+    <section id="report" class="section hidden"><h2 class="title">📄 রিপোর্ট ও ওষুধ</h2><div class="field"><label>রিপোর্টের বিবরণ</label><textarea placeholder="রিপোর্টের তথ্য লিখুন"></textarea></div><div class="field"><label>প্রেসক্রাইব করা ওষুধ</label><textarea placeholder="ওষুধের নাম ও নিয়ম"></textarea></div><div class="field"><label>রিপোর্টের ছবি/ফাইল</label><input id="reportFile" type="file" accept="image/*,.pdf"></div><button class="btn" onclick="saveReport()">রিপোর্ট/ওষুধ সংরক্ষণ</button><button class="btn" style="margin-left:8px;background:#175cd3" onclick="loadReport()">আগের তথ্য দেখুন</button><div id="reportMsg" class="success"></div></section>
 
     <section id="emergency" class="section hidden"><h2 class="title">🚨 জরুরি যোগাযোগ</h2><p>জরুরি অবস্থায় দ্রুত প্রয়োজনীয় সহায়তার জন্য নিচের নম্বরে যোগাযোগ করুন।</p><div><a class="phone" href="tel:01407278999">📞 01407278999</a><a class="phone" href="sms:01407278999">💬 SMS 01407278999</a><a class="phone" href="tel:01607339927">📞 01607339927</a><a class="phone" href="sms:01607339927">💬 SMS 01607339927</a></div><div class="notice">জীবন-ঝুঁকিপূর্ণ জরুরি অবস্থায় স্থানীয় জরুরি সেবাতেও যোগাযোগ করুন। AI চ্যাট জরুরি চিকিৎসার বিকল্প নয়।</div></section>
 
@@ -80,7 +80,17 @@ function saveReport(){
   const inputs=document.querySelectorAll('#report textarea');
   const data=[...inputs].map(x=>x.value);
   localStorage.setItem('homeHealthcareReport',JSON.stringify(data));
-  document.getElementById('reportMsg').textContent='✓ রিপোর্ট ও ওষুধের তথ্য এই ফোনে সংরক্ষণ করা হয়েছে।';
+  const f=document.getElementById('reportFile');
+  if(f.files[0]) localStorage.setItem('homeHealthcareReportFileName',f.files[0].name);
+  document.getElementById('reportMsg').textContent='✓ রিপোর্ট ও ওষুধের তথ্য এই ফোনে সংরক্ষণ করা হয়েছে।'+(f.files[0]?' ফাইল: '+f.files[0].name:'');
+}
+function loadReport(){
+  const raw=localStorage.getItem('homeHealthcareReport');
+  if(!raw){document.getElementById('reportMsg').textContent='এখনও কোনো সংরক্ষিত রিপোর্ট/ওষুধের তথ্য নেই।';return}
+  const data=JSON.parse(raw),inputs=document.querySelectorAll('#report textarea');
+  inputs.forEach((x,i)=>{if(data[i]!==undefined)x.value=data[i]});
+  const fn=localStorage.getItem('homeHealthcareReportFileName');
+  document.getElementById('reportMsg').textContent='✓ আগের রিপোর্ট/ওষুধের তথ্য দেখানো হয়েছে.'+(fn?' ফাইলের নাম: '+fn:'');
 }
 function sendChat(){const i=document.getElementById('chatInput'),v=i.value.trim();if(!v)return;const b=document.getElementById('chatbox');b.innerHTML+=`<div class="msg user">${escapeHtml(v)}</div><div class="msg ai">আপনার তথ্য পেয়েছি। এটি প্রাথমিক তথ্য মাত্র। নিরাপদ থাকার জন্য প্রয়োজন অনুযায়ী একজন যোগ্য ডাক্তার বা স্বাস্থ্যকর্মীর পরামর্শ নিন।</div>`;i.value='';b.scrollTop=b.scrollHeight}
 function escapeHtml(s){return s.replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}
