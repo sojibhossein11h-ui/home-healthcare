@@ -20,6 +20,7 @@
         <button class="action blue" onclick="show('doctor')">👨‍⚕️ ডাক্তার/স্বাস্থ্যকর্মী<small>পরামর্শ ও সেবার তথ্য</small></button>
         <button class="action" onclick="show('report')">📄 রিপোর্ট ও ওষুধ<small>রিপোর্ট, প্রেসক্রিপশন ও ওষুধ</small></button>
         <button class="action danger" onclick="show('emergency')">🚨 জরুরি সেবা<small>ফোন ও দ্রুত যোগাযোগ</small></button>
+        <button class="action blue" onclick="show('phone')">📞 ফোনে যোগাযোগ<small>এক ট্যাপে কল বা SMS করুন</small></button>
         <button class="action blue" onclick="show('chat')">💬 AI লাইভ চ্যাট<small>প্রাথমিক স্বাস্থ্য তথ্য ও নির্দেশনা</small></button>
         <button class="action" onclick="show('delivery')">💊 ওষুধ পৌঁছে দেওয়া<small>প্রয়োজন হলে ডেলিভারি সহায়তা</small></button>
       </div>
@@ -43,6 +44,12 @@
     <section id="report" class="section hidden"><h2 class="title">📄 রিপোর্ট ও ওষুধ</h2><div class="field"><label>রিপোর্টের বিবরণ</label><textarea placeholder="রিপোর্টের তথ্য লিখুন"></textarea></div><div class="field"><label>প্রেসক্রাইব করা ওষুধ</label><textarea placeholder="ওষুধের নাম ও নিয়ম"></textarea></div><div class="field"><label>রিপোর্টের ছবি/ফাইল</label><input id="reportFile" type="file" accept="image/*,.pdf"></div><button class="btn" onclick="saveReport()">রিপোর্ট/ওষুধ সংরক্ষণ</button><button class="btn" style="margin-left:8px;background:#175cd3" onclick="loadReport()">আগের তথ্য দেখুন</button><div id="reportMsg" class="success"></div></section>
 
     <section id="emergency" class="section hidden"><h2 class="title">🚨 জরুরি যোগাযোগ</h2><p>জরুরি অবস্থায় দ্রুত প্রয়োজনীয় সহায়তার জন্য নিচের নম্বরে যোগাযোগ করুন।</p><div><a class="phone" href="tel:01407278999">📞 01407278999</a><a class="phone" href="sms:01407278999">💬 SMS 01407278999</a><a class="phone" href="tel:01607339927">📞 01607339927</a><a class="phone" href="sms:01607339927">💬 SMS 01607339927</a></div><div class="notice">জীবন-ঝুঁকিপূর্ণ জরুরি অবস্থায় স্থানীয় জরুরি সেবাতেও যোগাযোগ করুন। AI চ্যাট জরুরি চিকিৎসার বিকল্প নয়।</div></section>
+
+    <section id="phone" class="section hidden"><h2 class="title">📞 ফোনে যোগাযোগ</h2>
+      <p>হোম হেলথ কেয়ারের সহায়তার জন্য সরাসরি কল অথবা SMS করুন।</p>
+      <div><a class="phone" href="tel:01407278999">📞 01407278999-এ কল</a><a class="phone" href="sms:01407278999">💬 01407278999-এ SMS</a><a class="phone" href="tel:01607339927">📞 01607339927-এ কল</a><a class="phone" href="sms:01607339927">💬 01607339927-এ SMS</a></div>
+      <div class="notice">জীবন-ঝুঁকিপূর্ণ জরুরি অবস্থায় স্থানীয় জরুরি সেবায়ও যোগাযোগ করুন।</div>
+    </section>
 
     <section id="chat" class="section hidden"><h2 class="title">💬 AI লাইভ চ্যাট</h2><div class="chat" id="chatbox"><div class="msg ai">আসসালামু আলাইকুম। আমি হোম হেলথ কেয়ারের AI সহকারী। আপনার সমস্যাটি লিখুন। জরুরি বা গুরুতর হলে দ্রুত ডাক্তার/স্বাস্থ্যকর্মীর সাহায্য নিন।</div></div><div class="chatrow"><input id="chatInput" placeholder="আপনার প্রশ্ন লিখুন..." onkeydown="if(event.key==='Enter')sendChat()"><button class="btn" onclick="sendChat()">পাঠান</button></div></section>
 
