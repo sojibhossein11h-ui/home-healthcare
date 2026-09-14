@@ -58,6 +58,23 @@ create table if not exists public.delivery_requests (
   updated_at timestamptz not null default now()
 );
 
+-- Keep delivery-request timestamps correct without trusting the browser/client.
+create or replace function public.set_delivery_request_updated_at()
+returns trigger
+language plpgsql
+security invoker
+as $$
+begin
+  new.updated_at = now();
+  return new;
+end;
+$$;
+
+drop trigger if exists delivery_requests_updated_at on public.delivery_requests;
+create trigger delivery_requests_updated_at
+before update on public.delivery_requests
+for each row execute function public.set_delivery_request_updated_at();
+
 alter table public.profiles enable row level security;
 alter table public.patients enable row level security;
 alter table public.reports enable row level security;
