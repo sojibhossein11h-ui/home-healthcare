@@ -14,7 +14,7 @@
   <main class="wrap">
     <section class="card" id="home">
       <div class="grid">
-        <button class="action" onclick="show('patient')">👤 রোগীর তথ্য<small>নাম, ঠিকানা, বয়স ও শারীরিক তথ্য</small></button>
+        <button class="action" onclick="openPatient()">👤 রোগীর তথ্য<small>নাম, ঠিকানা, বয়স ও শারীরিক তথ্য</small></button>
         <button class="action blue" onclick="show('doctor')">👨‍⚕️ ডাক্তার/স্বাস্থ্যকর্মী<small>পরামর্শ ও সেবার তথ্য</small></button>
         <button class="action" onclick="show('report')">📄 রিপোর্ট ও ওষুধ<small>রিপোর্ট, প্রেসক্রিপশন ও ওষুধ</small></button>
         <button class="action danger" onclick="show('emergency')">🚨 জরুরি সেবা<small>ফোন ও দ্রুত যোগাযোগ</small></button>
@@ -24,6 +24,12 @@
         <button class="action blue" onclick="show('deliveryContact')">🔒 ডেলিভারি যোগাযোগ<small>শুধু অনুমোদিত ডেলিভারি ম্যানের জন্য</small></button>
       </div>
     </section>
+
+    <section id="auth" class="section hidden"><button class="homebtn" onclick="goHome()">⌂ হোমে ফিরুন</button><h2 class="title">🔐 নিরাপদ লগইন</h2>
+<div class="field"><label>ইমেইল</label><input id="authEmail" type="email" placeholder="আপনার ইমেইল"></div>
+<div class="field"><label>পাসওয়ার্ড</label><input id="authPassword" type="password" placeholder="কমপক্ষে ৬ অক্ষর"></div>
+<div><button class="btn" onclick="signUp()">নতুন অ্যাকাউন্ট</button><button class="btn" style="margin-left:8px;background:#175cd3" onclick="signIn()">লগইন</button><button class="btn" style="margin-left:8px;background:#b42318" onclick="signOutUser()">লগআউট</button></div>
+<div id="authMsg" class="success"></div><div id="sessionMsg" class="notice">লগইন না করলে ব্যক্তিগত রোগীর তথ্য Supabase-এ সংরক্ষণ করা যাবে না।</div></section>
 
     <section id="patient" class="section hidden"><button class="homebtn" onclick="goHome()">⌂ হোমে ফিরুন</button><h2 class="title">👤 রোগীর তথ্য</h2>
       <div class="field"><label>রোগীর নাম</label><input id="name" placeholder="নাম লিখুন"></div>
@@ -54,14 +60,22 @@
   </main>
   <a class="floating" href="tel:01407278999">🚨 জরুরি কল</a>
   <div class="footer">হোম হেলথ কেয়ার — মানবিক সেবার জন্য তৈরি একটি প্রাথমিক ওয়েব অ্যাপ</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="./supabase-client.js"></script>
 <script>
 function goHome(){document.querySelectorAll('.section').forEach(x=>x.classList.add('hidden'));document.getElementById('home').scrollIntoView({behavior:'smooth',block:'start'})}
 function startPrivateContact(){const p=document.getElementById('contactPatientPhone').value.trim();if(!/^01\d{9}$/.test(p)){alert('সঠিক বাংলাদেশি মোবাইল নম্বর দিন।');return}document.getElementById('patientCall').href='tel:'+p;document.getElementById('contactActions').classList.remove('hidden')}
 function openMessageBox(){document.getElementById('privateMessageBox').classList.remove('hidden')}
 function sendPrivateMessage(){const i=document.getElementById('privateMessageInput'),v=i.value.trim();if(!v)return;document.getElementById('privateMessages').insertAdjacentHTML('beforeend','<div class="msg user">'+escapeHtml(v)+'</div>');i.value=''}
 function show(id){document.querySelectorAll('.section').forEach(x=>x.classList.add('hidden'));document.getElementById(id).classList.remove('hidden');document.getElementById(id).scrollIntoView({behavior:'smooth',block:'start'})}
-function savePatient(){const inputs=document.querySelectorAll('#patient input,#patient select,#patient textarea');localStorage.setItem('homeHealthcarePatient',JSON.stringify([...inputs].map(x=>x.value)));document.getElementById('patientMsg').textContent='✓ রোগীর তথ্য এই ফোনে সংরক্ষণ করা হয়েছে।'}
-function loadPatient(){const raw=localStorage.getItem('homeHealthcarePatient');if(!raw){document.getElementById('patientMsg').textContent='এখনও কোনো সংরক্ষিত তথ্য নেই।';return}const data=JSON.parse(raw),inputs=document.querySelectorAll('#patient input,#patient select,#patient textarea');inputs.forEach((x,i)=>{if(data[i]!==undefined)x.value=data[i]});document.getElementById('patientMsg').textContent='✓ আগের সংরক্ষিত তথ্য দেখানো হয়েছে।'}
+async function getSessionUser(){const {data:{user}}=await supabaseClient.auth.getUser();return user}
+async function signUp(){const e=document.getElementById('authEmail').value.trim(),p=document.getElementById('authPassword').value;if(!e||p.length<6){document.getElementById('authMsg').textContent='ইমেইল ও কমপক্ষে ৬ অক্ষরের পাসওয়ার্ড দিন।';return}const {error}=await supabaseClient.auth.signUp({email:e,password:p});document.getElementById('authMsg').textContent=error?'❌ '+error.message:'✓ অ্যাকাউন্ট তৈরি হয়েছে। ইমেইল যাচাই প্রয়োজন হলে ইনবক্স দেখুন।'}
+async function signIn(){const e=document.getElementById('authEmail').value.trim(),p=document.getElementById('authPassword').value;const {error}=await supabaseClient.auth.signInWithPassword({email:e,password:p});document.getElementById('authMsg').textContent=error?'❌ '+error.message:'✓ লগইন সফল।';await updateSessionUI()}
+async function signOutUser(){await supabaseClient.auth.signOut();document.getElementById('authMsg').textContent='✓ লগআউট হয়েছে।';await updateSessionUI()}
+async function updateSessionUI(){const u=await getSessionUser();document.getElementById('sessionMsg').textContent=u?'✓ লগইন করা আছে: '+u.email:'লগইন না করলে ব্যক্তিগত রোগীর তথ্য Supabase-এ সংরক্ষণ করা যাবে না।'}
+async function openPatient(){const u=await getSessionUser();if(!u){show('auth');document.getElementById('authMsg').textContent='রোগীর ব্যক্তিগত তথ্য সংরক্ষণের আগে লগইন করুন।';return}show('patient');await loadPatient()}
+async function savePatient(){const u=await getSessionUser();if(!u){document.getElementById('patientMsg').textContent='❌ আগে লগইন করুন।';return}const ta=document.querySelectorAll('#patient textarea');const row={user_id:u.id,name:document.getElementById('name').value.trim(),age:Number(document.getElementById('age').value)||null,blood_pressure:document.getElementById('bp').value.trim()||null,blood_group:document.getElementById('blood').value.trim()||null,address:ta[0].value.trim()||null,health_condition:ta[1].value.trim()||null};const {data:existing}=await supabaseClient.from('patients').select('id').eq('user_id',u.id).limit(1);let result;if(existing&&existing.length){result=await supabaseClient.from('patients').update(row).eq('id',existing[0].id)}else{result=await supabaseClient.from('patients').insert(row)}document.getElementById('patientMsg').textContent=result.error?'❌ '+result.error.message:'✓ রোগীর তথ্য Supabase Database-এ সংরক্ষণ হয়েছে।'}
+async function loadPatient(){const u=await getSessionUser();if(!u)return;const {data,error}=await supabaseClient.from('patients').select('*').eq('user_id',u.id).limit(1).maybeSingle();if(error){document.getElementById('patientMsg').textContent='❌ '+error.message;return}if(!data){document.getElementById('patientMsg').textContent='এখনও কোনো রোগীর তথ্য নেই।';return}document.getElementById('name').value=data.name||'';document.getElementById('age').value=data.age||'';document.getElementById('bp').value=data.blood_pressure||'';document.getElementById('blood').value=data.blood_group||'';ta=document.querySelectorAll('#patient textarea');ta[0].value=data.address||'';ta[1].value=data.health_condition||'';document.getElementById('patientMsg').textContent='✓ Supabase থেকে আগের তথ্য পাওয়া গেছে।'}
 function saveDoctor(){const data={type:document.getElementById('careType').value,name:document.getElementById('doctorName').value,phone:document.getElementById('doctorPhone').value,advice:document.getElementById('doctorAdvice').value};localStorage.setItem('homeHealthcareDoctor',JSON.stringify(data));document.getElementById('doctorMsg').textContent='✓ ডাক্তার/স্বাস্থ্যকর্মীর তথ্য এই ফোনে সংরক্ষণ করা হয়েছে।'}
 function loadDoctor(){const d=JSON.parse(localStorage.getItem('homeHealthcareDoctor')||'null');if(!d){document.getElementById('doctorMsg').textContent='এখনও কোনো সংরক্ষিত তথ্য নেই।';return}document.getElementById('careType').value=d.type||'ডাক্তারের পরামর্শ';document.getElementById('doctorName').value=d.name||'';document.getElementById('doctorPhone').value=d.phone||'';document.getElementById('doctorAdvice').value=d.advice||'';document.getElementById('doctorMsg').textContent='✓ আগের তথ্য দেখানো হয়েছে।'}
 function saveReport(){const inputs=document.querySelectorAll('#report textarea'),data=[...inputs].map(x=>x.value);localStorage.setItem('homeHealthcareReport',JSON.stringify(data));const f=document.getElementById('reportFile');if(f.files[0])localStorage.setItem('homeHealthcareReportFileName',f.files[0].name);document.getElementById('reportMsg').textContent='✓ রিপোর্ট ও ওষুধের তথ্য এই ফোনে সংরক্ষণ করা হয়েছে।'+(f.files[0]?' ফাইল: '+f.files[0].name:'')}
@@ -70,6 +84,8 @@ function requestDelivery(){const data={name:document.getElementById('deliveryNam
 function sendChat(){const i=document.getElementById('chatInput'),v=i.value.trim();if(!v)return;const b=document.getElementById('chatbox');b.innerHTML+='<div class="msg user">'+escapeHtml(v)+'</div>';b.innerHTML+='<div class="msg ai">'+chatReply(v)+'</div>';i.value='';b.scrollTop=b.scrollHeight}
 function chatReply(v){const q=v.toLowerCase();if(/বুক ব্যথা|শ্বাসকষ্ট|অজ্ঞান|খিঁচুনি|রক্তপাত|stroke|স্ট্রোক|heart attack|হার্ট অ্যাটাক/.test(q))return '⚠️ এটি জরুরি হতে পারে। এখনই নিকটস্থ জরুরি চিকিৎসা নিন এবং হোম হেলথ কেয়ারের <a href="tel:01407278999">01407278999</a> বা <a href="tel:01607339927">01607339927</a>-এ যোগাযোগ করুন। AI জরুরি চিকিৎসার বিকল্প নয়।';if(/জ্বর|fever/.test(q))return 'জ্বরের তাপমাত্রা ও কতক্ষণ ধরে আছে তা লিখুন। পানি পান করুন এবং গুরুতর লক্ষণ থাকলে ডাক্তার/স্বাস্থ্যকর্মীর পরামর্শ নিন।';if(/রক্তচাপ|ব্লাড প্রেসার|blood pressure/.test(q))return 'আপনার রক্তচাপের রিডিং (যেমন 120/80), মাপার সময় এবং কোনো উপসর্গ আছে কি না লিখুন। খুব বেশি বা উপসর্গসহ অস্বাভাবিক হলে দ্রুত চিকিৎসা নিন।';if(/ওষুধ|medicine|প্রেসক্রিপশন/.test(q))return 'ওষুধের নাম, ডোজ এবং কার পরামর্শে দেওয়া হয়েছে তা লিখুন। প্রেসক্রিপশন ছাড়া ওষুধ শুরু/বন্ধ করবেন না।';return 'আপনার তথ্য পেয়েছি। আরও ভালোভাবে সহায়তা করতে বয়স, প্রধান সমস্যা, কতক্ষণ ধরে হচ্ছে এবং কোনো রিপোর্ট/রক্তচাপের তথ্য থাকলে লিখুন। এটি প্রাথমিক তথ্য মাত্র—প্রয়োজনে যোগ্য ডাক্তার বা স্বাস্থ্যকর্মীর পরামর্শ নিন।'}
 function escapeHtml(s){return s.replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}
+updateSessionUI();
+supabaseClient.auth.onAuthStateChange(() => updateSessionUI());
 if ('serviceWorker' in navigator) { window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js', {scope:'./'}).catch(() => {})); }
 </script>
 </body>
