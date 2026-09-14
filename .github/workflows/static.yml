@@ -24,6 +24,18 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
 
+      - name: Validate static files
+        run: |
+          test -f index.html
+          test -f manifest.json
+          test -f sw.js
+          python - <<'PY'
+          import json
+          with open('manifest.json', encoding='utf-8') as f:
+              json.load(f)
+          print('Static file validation passed')
+          PY
+
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
