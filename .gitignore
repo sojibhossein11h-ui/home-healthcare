@@ -5,6 +5,13 @@ build/
 # Local configuration file (sdk path, etc)
 local.properties
 
+# Environment / secret configuration
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
 # Log/OS Files
 *.log
 
