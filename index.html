@@ -32,7 +32,7 @@
 <div id="authMsg" class="success"></div><div id="sessionMsg" class="notice">লগইন না করলে ব্যক্তিগত রোগীর তথ্য Supabase-এ সংরক্ষণ করা যাবে না।</div></section>
 
     <section id="patient" class="section hidden"><button class="homebtn" onclick="goHome()">⌂ হোমে ফিরুন</button><h2 class="title">👤 রোগীর তথ্য</h2>
-      <div class="field"><label>রোগীর নাম</label><input id="name" placeholder="নাম লিখুন"></div>
+      <div class="field"><label>রোগীর নাম</label><input id="patientName" name="patient_full_name" type="text" autocomplete="section-patient name" autocapitalize="words" spellcheck="false" data-lpignore="true" data-1p-ignore="true" placeholder="নাম লিখুন"></div>
       <div class="grid"><div class="field"><label>বয়স</label><input id="age" type="number" min="0" placeholder="বয়স"></div><div class="field"><label>লিঙ্গ</label><select id="gender"><option>নির্বাচন করুন</option><option>পুরুষ</option><option>নারী</option><option>অন্যান্য</option></select></div></div>
       <div class="grid"><div class="field"><label>রক্তচাপ</label><input id="bp" placeholder="যেমন 120/80"></div><div class="field"><label>রক্তের গ্রুপ</label><input id="blood" placeholder="যেমন O+ / O-"></div></div><div class="grid"><div class="field"><label>ওজন (কেজি)</label><input id="weight" type="number" step="0.1" placeholder="ওজন"></div><div class="field"><label>উচ্চতা (সেমি)</label><input id="height" type="number" step="0.1" placeholder="উচ্চতা"></div></div>
       <div class="field"><label>ঠিকানা</label><textarea placeholder="সম্পূর্ণ ঠিকানা"></textarea></div><div class="field"><label>অসুস্থতার বিবরণ</label><textarea placeholder="কী সমস্যা হচ্ছে লিখুন"></textarea></div>
