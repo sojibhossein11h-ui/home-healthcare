@@ -36,6 +36,20 @@ jobs:
           print('Static file validation passed')
           PY
 
+      - name: Fix patient name input behavior
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('index.html')
+          s = p.read_text(encoding='utf-8')
+          old = '<input id="name" placeholder="নাম লিখুন">'
+          new = '<input id="name" name="patientName" type="text" autocomplete="name" autocapitalize="words" inputmode="text" spellcheck="false" placeholder="নাম লিখুন">'
+          if old not in s:
+              raise SystemExit('Patient name input pattern not found')
+          p.write_text(s.replace(old, new, 1), encoding='utf-8')
+          print('Patient name input configured as a text/name field; email autofill is not requested.')
+          PY
+
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
