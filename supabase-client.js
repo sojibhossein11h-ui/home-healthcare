@@ -62,7 +62,7 @@ setTimeout(() => {
     try {
       const user = await currentUser();
       if (!user) { msg('patientMsg', '❌ আগে লগইন করুন।'); return; }
-      const name = document.getElementById('name')?.value.trim();
+      const name = document.getElementById('patientName')?.value.trim();
       const ageValue = document.getElementById('age')?.value;
       const gender = document.getElementById('gender')?.value;
       const bp = document.getElementById('bp')?.value.trim();
@@ -90,7 +90,7 @@ setTimeout(() => {
       if (!user) { msg('patientMsg', '❌ আগে লগইন করুন।'); return; }
       const data = await currentPatient(user.id);
       if (!data) { msg('patientMsg', 'এখনও কোনো রোগীর তথ্য নেই।'); return; }
-      document.getElementById('name').value = data.name || '';
+      document.getElementById('patientName').value = data.name || '';
       document.getElementById('age').value = data.age ?? '';
       document.getElementById('bp').value = data.blood_pressure || '';
       document.getElementById('blood').value = data.blood_group || '';
