@@ -85,5 +85,5 @@ async function sendMessage(id,submit=false){
 function escapeHtml(s){return String(s??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));}
 window.addEventListener('load',()=>setTimeout(()=>{getProfile().then(x=>{if(x)enforceRole();}).catch(()=>{});},300));
 </script>
-</body>
+<script>if ('serviceWorker' in navigator) window.addEventListener('load',()=>navigator.serviceWorker.register('./service-worker.js').catch(()=>{}));</script></body>
 </html>
