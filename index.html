@@ -48,4 +48,4 @@ async function sendDeliveryMessage(openBox=false){const box=document.getElementB
 function sendChat(){const i=document.getElementById('chatInput'),v=i.value.trim();if(!v)return;document.getElementById('chatbox').insertAdjacentHTML('beforeend','<div class="msg user">'+escapeHtml(v)+'</div><div class="msg ai">আপনার তথ্য পেয়েছি। এটি প্রাথমিক তথ্য মাত্র; প্রয়োজন হলে যোগ্য ডাক্তার/স্বাস্থ্যকর্মীর পরামর্শ নিন। জরুরি হলে দ্রুত স্থানীয় জরুরি সেবায় যোগাযোগ করুন।</div>');i.value=''}
 function escapeHtml(s){return s.replace(/[&<>'\"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}
 </script>
-</body></html>
+<script>if ('serviceWorker' in navigator) window.addEventListener('load',()=>navigator.serviceWorker.register('./service-worker.js').catch(()=>{}));</script></body></html>
