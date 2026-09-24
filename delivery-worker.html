@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="হোম হেলথ কেয়ার — অনুমোদিত ডেলিভারি কর্মীর নিরাপদ সেবা প্যানেল">
+<meta name="theme-color" content="#087f5b">
+<title>ডেলিভারি কর্মী — হোম হেলথ কেয়ার</title>
+<link rel="manifest" href="./manifest.json">
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,"Noto Sans Bengali",sans-serif;background:#f4f8fb;color:#17324d}.wrap{max-width:760px;margin:auto;padding:18px}.top{background:linear-gradient(135deg,#087f5b,#0b6fa4);color:#fff;padding:24px 18px;border-radius:0 0 24px 24px}.card{background:#fff;border-radius:18px;padding:18px;margin:14px 0;box-shadow:0 5px 18px #1232}.field{margin:10px 0}.field label{display:block;font-weight:700;margin-bottom:6px}.field input,.field textarea{width:100%;padding:12px;border:1px solid #d4e0e8;border-radius:12px}.btn{border:0;border-radius:12px;padding:11px 15px;background:#087f5b;color:#fff;font-weight:700;margin:3px;cursor:pointer}.danger{background:#b42318}.muted{color:#667784;font-size:13px}.item{border:1px solid #dce6ed;border-radius:14px;padding:14px;margin:10px 0}.pill{display:inline-block;background:#eef7f4;color:#075d47;border-radius:999px;padding:5px 9px;font-size:12px;font-weight:700}.phone{display:inline-block;text-decoration:none;background:#e9f8f1;color:#087f5b;padding:10px 12px;border-radius:10px;font-weight:700;margin:3px}.msg{font-weight:700;margin-top:10px}.hidden{display:none}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap"><h1>ডেলিভারি কর্মী প্যানেল</h1><div>শুধু অনুমোদিত Delivery Worker-এর জন্য</div></div></header>
+<main class="wrap">
+<section class="card">
+<h2>🔐 নিরাপদ লগইন</h2>
+<div class="field"><label>ইমেইল</label><input id="email" type="email" autocomplete="username"></div>
+<div class="field"><label>পাসওয়ার্ড</label><input id="password" type="password" autocomplete="current-password"></div>
+<button class="btn" onclick="login()">লগইন</button>
+<button class="btn danger" onclick="logout()">লগআউট</button>
+<div id="authMsg" class="msg"></div>
+</section>
+<section id="panel" class="card hidden">
+<h2>📦 Assigned Delivery</h2>
+<div class="muted">রোগীর ব্যক্তিগত ফোন নম্বর শুধু অনুমোদিত assigned delivery worker-এর জন্য দেখানো হবে।</div>
+<button class="btn" onclick="loadDeliveries()">ডেলিভারি তালিকা দেখুন</button>
+<div id="list"></div>
+<div id="panelMsg" class="msg"></div>
+</section>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="./supabase-client.js"></script>
+<script>
+const wait=()=>window.supabaseClient;
+async function getProfile(){
+ const s=wait(); const {data:{user}}=await s.auth.getUser(); if(!user)return null;
+ const {data,error}=await s.from('profiles').select('id,role,full_name').eq('id',user.id).maybeSingle();
+ if(error)throw error; return data?{user,profile:data}:null;
+}
+async function login(){
+ try{
+  const email=document.getElementById('email').value.trim(),password=document.getElementById('password').value;
+  if(!email||!password)throw new Error('ইমেইল ও পাসওয়ার্ড দিন।');
+  const {error}=await wait().auth.signInWithPassword({email,password}); if(error)throw error;
+  await enforceRole();
+ }catch(e){document.getElementById('authMsg').textContent='❌ '+(e.message||'লগইন ব্যর্থ।');}
+}
+async function enforceRole(){
+ const x=await getProfile();
+ if(!x){document.getElementById('panel').classList.add('hidden');document.getElementById('authMsg').textContent='❌ লগইন session পাওয়া যায়নি।';return;}
+ if(x.profile.role!=='delivery'){
+  await wait().auth.signOut(); document.getElementById('panel').classList.add('hidden');
+  document.getElementById('authMsg').textContent='❌ এই প্যানেল শুধু অনুমোদিত Delivery Worker-এর জন্য।'; return;
+ }
+ document.getElementById('authMsg').textContent='✓ Delivery Worker হিসেবে authenticated session সক্রিয়।';
+ document.getElementById('panel').classList.remove('hidden'); await loadDeliveries();
+}
+async function logout(){await wait().auth.signOut();document.getElementById('panel').classList.add('hidden');document.getElementById('authMsg').textContent='✓ লগআউট হয়েছে।';}
+async function loadDeliveries(){
+ try{
+  const x=await getProfile(); if(!x||x.profile.role!=='delivery')throw new Error('শুধু অনুমোদিত Delivery Worker-এর জন্য।');
+  const {data,error}=await wait().from('deliveries').select('id,status,delivery_address,prescription_id,patient_id,created_at').eq('assigned_to',x.user.id).order('created_at',{ascending:false});
+  if(error)throw error;
+  const list=document.getElementById('list');
+  if(!data?.length){list.innerHTML='<div class="item">এখন কোনো assigned delivery পাওয়া যায়নি।</div>';return;}
+  list.innerHTML=data.map(d=>'<div class="item"><div><b>Delivery:</b> '+escapeHtml(d.id)+'</div><div><span class="pill">'+escapeHtml(d.status)+'</span></div><div><b>ঠিকানা:</b> '+escapeHtml(d.delivery_address||'')+'</div><button class="btn" onclick="showContact(\''+d.id+'\')">🔒 ব্যক্তিগত যোগাযোগ</button><select onchange="updateStatus(\''+d.id+'\',this.value)"><option value="">স্ট্যাটাস পরিবর্তন</option><option>assigned</option><option>out_for_delivery</option><option>delivered</option><option>cancelled</option></select><div id="c-'+d.id+'" class="muted"></div></div>').join('');
+ }catch(e){document.getElementById('panelMsg').textContent='❌ '+(e.message||'ডেলিভারি লোড করা যায়নি।');}
+}
+async function updateStatus(id,status){if(!status)return;try{const x=await getProfile();if(!x||x.profile.role!=='delivery')throw new Error('অনুমোদিত Delivery Worker প্রয়োজন।');const {error}=await wait().from('deliveries').update({status}).eq('id',id).eq('assigned_to',x.user.id);if(error)throw error;document.getElementById('panelMsg').textContent='✓ ডেলিভারি স্ট্যাটাস আপডেট হয়েছে।';await loadDeliveries();}catch(e){document.getElementById('panelMsg').textContent='❌ '+(e.message||'স্ট্যাটাস আপডেট হয়নি।');}}
+async function showContact(id){
+ try{
+  const x=await getProfile();if(!x||x.profile.role!=='delivery')throw new Error('অনুমোদিত Delivery Worker প্রয়োজন।');
+  const {data,error}=await wait().from('delivery_private_contacts').select('patient_phone').eq('delivery_id',id).maybeSingle();if(error)throw error;
+  const el=document.getElementById('c-'+id);
+  if(!data?.patient_phone){el.textContent='ব্যক্তিগত ফোন এখনো পাওয়া যায়নি।';return;}
+  el.innerHTML='<a class="phone" href="tel:'+escapeHtml(data.patient_phone)+'">📞 রোগীকে কল</a><button class="btn" onclick="sendMessage(\''+id+'\')">💬 ব্যক্তিগত বার্তা</button><div id="m-'+id+'" class="hidden"><textarea id="t-'+id+'" placeholder="রোগীকে বার্তা লিখুন"></textarea><button class="btn" onclick="sendMessage(\''+id+'\',true)">বার্তা পাঠান</button></div>';
+ }catch(e){document.getElementById('panelMsg').textContent='❌ '+(e.message||'ব্যক্তিগত যোগাযোগ লোড হয়নি।');}
+}
+async function sendMessage(id,submit=false){
+ const box=document.getElementById('m-'+id);if(!submit){box.classList.remove('hidden');return;}
+ try{const x=await getProfile();if(!x||x.profile.role!=='delivery')throw new Error('অনুমোদিত Delivery Worker প্রয়োজন।');const message=document.getElementById('t-'+id).value.trim();if(!message)throw new Error('বার্তা লিখুন।');const {error}=await wait().from('delivery_messages').insert({delivery_id:id,sender_id:x.user.id,message});if(error)throw error;document.getElementById('panelMsg').textContent='✓ ব্যক্তিগত বার্তা পাঠানো হয়েছে।';document.getElementById('t-'+id).value='';}catch(e){document.getElementById('panelMsg').textContent='❌ '+(e.message||'বার্তা পাঠানো যায়নি।');}
+}
+function escapeHtml(s){return String(s??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));}
+window.addEventListener('load',()=>setTimeout(()=>{getProfile().then(x=>{if(x)enforceRole();}).catch(()=>{});},300));
+</script>
+</body>
+</html>
