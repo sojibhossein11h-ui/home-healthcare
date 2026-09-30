@@ -28,7 +28,7 @@ jobs:
         run: |
           test -f index.html
           test -f manifest.json
-          test -f sw.js
+          test -f service-worker.js
           python - <<'PY'
           import json
           with open('manifest.json', encoding='utf-8') as f:
