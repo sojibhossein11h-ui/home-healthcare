@@ -12,6 +12,11 @@ setTimeout(() => {
     const { data: { user } } = await supabaseClient.auth.getUser();
     return user || null;
   }
+  function returnToPatientIfRequested() {
+    if (new URLSearchParams(location.search).get('return') === 'patient') {
+      location.href = './#patient';
+    }
+  }
   async function currentPatient(userId) {
     const { data, error } = await supabaseClient.from('patients').select('*').eq('user_id', userId).limit(1).maybeSingle();
     if (error) throw error; return data || null;
@@ -61,7 +66,7 @@ setTimeout(() => {
       const { data, error } = await supabaseClient.auth.signUp({ email, password });
       if (error) throw error;
       msg('authMsg', data.session ? '✓ অ্যাকাউন্ট তৈরি ও লগইন হয়েছে।' : '✓ অ্যাকাউন্ট তৈরি হয়েছে। ইমেইল verification প্রয়োজন হলে তা সম্পন্ন করুন।');
-      if (data.session) await refreshSession(true);
+      if (data.session) { await refreshSession(true); returnToPatientIfRequested(); }
     } catch (error) { msg('authMsg', '❌ ' + (error?.message || 'অ্যাকাউন্ট তৈরি করা যায়নি।')); }
   };
 
@@ -74,6 +79,7 @@ setTimeout(() => {
       if (error) throw error;
       msg('authMsg', '✓ নিরাপদভাবে লগইন হয়েছে।');
       await refreshSession(true);
+      returnToPatientIfRequested();
     } catch (error) { msg('authMsg', '❌ ' + (error?.message || 'লগইন করা যায়নি।')); }
   };
 
